@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +20,9 @@ class MemAppenderTest {
 
     @BeforeEach
     public void setUp() {
-        Layout layout = PatternLayout.createDefaultLayout();
-        memAppender = MemAppender.getInstance("MemAppenderTest", layout, 10);
+        String velocityPattern = "[$p] $c $d: $m";  // Example pattern
+        VelocityLayout velocityLayout = new VelocityLayout(velocityPattern);  // Use VelocityLayout
+        memAppender = MemAppender.getInstance("MemAppenderTest", velocityLayout, 10);
         logger = LogManager.getLogger(MemAppenderTest.class);
     }
 
@@ -39,9 +39,13 @@ class MemAppenderTest {
 
         List<String> logs = memAppender.getEventStrings();
         assertEquals(2, logs.size(), "Log size should be 2");
-        assertTrue(logs.get(0).contains("Test log 1"));
+
+        // Adjust this part to reflect the VelocityLayout pattern
+        assertTrue(logs.get(0).contains("TestLogger"), "Pattern should contain the logger name");
         assertTrue(logs.get(1).contains("Test log 2"));
+
     }
+
 
     @Test
     public void testMaxSize() {
